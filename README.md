@@ -709,3 +709,108 @@ ls -lh ~/ros2_ws/results/
 xdg-open ~/ros2_ws/results/
 ```
 
+
+# Запуск програми
+Нам знадобляться три термінали Ubuntu. Четвертий буде додатковим для rqt_image_view.
+
+У першому терміналі:
+
+```bash
+cd ~/ros2_ws
+source /opt/ros/humble/setup.bash
+source ~/ros2_ws/install/setup.bash
+```
+
+Перевіримо, чи зареєстровані наші дві ноди:
+
+```bash
+ros2 pkg executables vision_pkg
+```
+
+Якщо пакет ще не збирався після останніх змін:
+
+```bash
+colcon build --packages-select vision_pkg
+source ~/ros2_ws/install/setup.bash
+```
+
+
+Термінал №1 — запуск симулятора камери
+
+```bash
+source /opt/ros/humble/setup.bash
+source ~/ros2_ws/install/setup.bash
+ros2 run vision_pkg camera_sim_node
+```
+
+Термінал №2 — перевірка відеопотоку
+
+```bash
+source /opt/ros/humble/setup.bash
+source ~/ros2_ws/install/setup.bash
+ros2 topic list
+```
+
+Перевіряємо частоту відеопотоку:
+
+```bash
+ros2 topic hz /camera/image
+```
+
+
+Після перевірки натискаємо Ctrl + C, щоб зупинити саме команду моніторингу. Симулятор у першому терміналі продовжує працювати.
+
+
+Перевіряємо ширину кадру та висоту:
+
+```bash
+ros2 topic echo /camera/image --once --field width
+ros2 topic echo /camera/image --once --field height
+```
+
+Термінал №3 — запуск Vision Node
+
+```bash
+source /opt/ros/humble/setup.bash
+source ~/ros2_ws/install/setup.bash
+```
+
+Запускаємо ноду обробки зображень:
+
+```bash
+ros2 run vision_pkg vision_node
+```
+
+Додаткова демонстрація через rqt_image_view
+Вона дозволяє показати, що відеопотік можна переглядати не лише через власну програму OpenCV, а й стандартними інструментами ROS 2.
+
+Відкриваємо четвертий термінал.
+
+```bash
+source /opt/ros/humble/setup.bash
+source ~/ros2_ws/install/setup.bash
+ros2 run rqt_image_view rqt_image_view
+```
+
+Відкривається графічне вікно.
+Збереження результатів обробки, тобто результати можна не лише переглядати, а й зберігати.
+
+Повертаємося до вікна Vision.
+
+Натискаємо клавішу:
+"S"
+
+У будь-якому вільному терміналі:
+
+```bash
+ls -lh ~/ros2_ws/results/
+```
+
+Маємо побачити всі сім файлів.
+
+Відкриваємо папку:
+
+```bash
+xdg-open ~/ros2_ws/results/
+```
+
